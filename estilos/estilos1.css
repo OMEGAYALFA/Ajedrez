@@ -6,8 +6,8 @@
 }
 
 @font-face{
-  font-family: "Menlof";
-  src: url("../fuentes/Menlof.ttf") format("truetype");
+  font-family: "DejaVuSansMono";
+  src: url("../fuentes/DejaVuSansMono.ttf") format("truetype");
   font-style: normal;
   font-weight: normal;
 }
@@ -120,7 +120,7 @@ h1{
   font-size: 40pt;
   margin: 0;
   margin-bottom: 10px;
-  font-family: Menlof;
+  font-family: DejaVuSansMono;
 }
 .animTitulo0{
   animation: titulo 2s linear;

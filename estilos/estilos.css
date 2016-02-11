@@ -6,15 +6,15 @@
 }
 
 @font-face{
-	font-family: "Menlof";
-	src: url("../fuentes/Menlof.ttf") format("truetype");
+	font-family: "DejaVuSansMono";
+	src: url("../fuentes/DejaVuSansMono.ttf") format("truetype");
 	font-style: normal;
 	font-weight: normal;
 }
 
 h1{
 	margin-top: 0;
-	font-family: Menlof;
+	font-family: DejaVuSansMono;
 	font-size: 20pt;
 	margin-bottom: 3px;
 }
