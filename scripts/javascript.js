@@ -32,6 +32,7 @@ function resetVar(){
 	localStorage.setItem("guardarColB","");
 	localStorage.setItem("guardarColN","");
 	localStorage.setItem("guardar","");
+	localStorage.setItem("contTablas","0");
 }
 
 function musicaJuego(){
@@ -93,9 +94,12 @@ function reproSon(nombre){
 	}
 }
 function eveDetec(){
-	document.getElementById("bru").addEventListener("click",function(){
-																reproSon("click.wav");
-																ultMov();										
+	document.getElementById("bru").addEventListener("click",function(){																
+																var tmp = localStorage.getItem("jugar");
+																if(tmp!="no"){
+																	reproSon("click.wav");
+																	ultMov();	
+																}									
 	});
 	document.getElementById("rst").addEventListener("click",function(){
 																reproSon("click2.wav");					
@@ -120,6 +124,9 @@ function eveDetec(){
 																guardar();
 																reproSon("click2.wav");																guardar();
 																location.href="../index.html";
+	});
+	document.getElementById("parrt").addEventListener("click",function(){
+														cheat();		
 	});
 }
 
@@ -1938,10 +1945,14 @@ function colocador(ids,tmp){
 			reproSon("ficha.wav");
 			var ultFichtemp = localStorage.getItem("ultmfich");
 			var UltmFichTemp;
-			if(array[fild][cold]==="nada"){
+			if(array[fild][cold]=="nada"){
 				localStorage.setItem("ultmfich",ultFichtemp+"nada_");
+				var contTablas = parseInt(localStorage.getItem("contTablas"));
+				contTablas++;
+				localStorage.setItem("contTablas",contTablas);
 			}else{
 				localStorage.setItem("ultmfich",ultFichtemp+array[fild][cold]);
+				localStorage.setItem("contTablas","0");
 			}
 			
 			array[fild][cold]=array[fils][cols];
@@ -2201,6 +2212,7 @@ function filasCol(){
 			}
 		}
 	}
+	compTablas();
 }
 
 function peonComp(){
@@ -3181,6 +3193,7 @@ function jaqueComp(modoMate,arrayMate,retroceso){
 			sessionStorage.setItem("matador","no");
 			document.getElementById("bod").setAttribute("class","");
 			localStorage.setItem("jaqueUso","");
+			compAhogado();
 		}
 	}
 	if(reynjaque==true && modoMate==true){
@@ -3409,10 +3422,10 @@ function jaqueMateComp(fichas,posiciones,fichasPosi,posicionesPosi,letraRey,posi
 	
 	var mattt = localStorage.getItem("jaqueMattt");
 	if(comp==comp1 && ttjaque==true && mattt=="si"){
+		restaurarAzul();
 		alert("Jaque Mate");
 		localStorage.setItem("jaqueMattt","si");
 		localStorage.setItem("jugar","no");
-		restaurarAzul();
 		var tmp=localStorage.getItem("turno");
 		var ganador;
 		if(tmp=="negras"){
@@ -3420,7 +3433,7 @@ function jaqueMateComp(fichas,posiciones,fichasPosi,posicionesPosi,letraRey,posi
 		}else{
 			ganador="negras";
 		}
-		document.getElementById("mm").innerHTML="Han ganado las fichas "+ganador;
+		document.getElementById("turno").innerHTML="Han ganado las fichas "+ganador;
 	}
 
 
@@ -3645,9 +3658,203 @@ function cargarSave(){
 }
 
 
+function compAhogado(){
+	var turn = localStorage.getItem("turno");
+	var letra=turn.charAt(0);
+	var letra1;
+	if(turn=="blancas"){
+		letra1="n";
+	}else{
+		letra1="b";
+	}
 
+	var array1= JSON.parse( JSON.stringify( array ) );
+	var rey = "rey_"+letra1;
+	var x;
+	var y;
+	var fil;
+	var col;
+	var comp=0;
+	var comp1=8;
+	var salir=false;
 
+	for(fil=1;fil<9 && salir==false;fil++){
+		for(col=1;col<9 && salir==false;col++){
+			if(array[fil][col]==rey){
+				salir=true;
+				x= fil;
+				y=col;
+			}
+		}
+	}
+	fil=x;
+	col=y;
 
+	//mover el rey 
+	//vertica arriba
+	var filcam = fil-1;
+	if(filcam>0){
+		if(array1[filcam][col]=="nada" || (array1[filcam][col].charAt(4)==letra1 && array1[filcam][col]!="rey_"+letra1)){
+			array1[filcam][col]=array[fil][col];
+			array1[fil][col]="nada";
+			var tmp = jaqueComp(true,array1);
+			if(tmp==true){
+				comp++;
+			}
+		}else{
+			comp1--;
+		}
+	}else{
+		comp1--;
+	}
+	array1.length=0;
+	array1= JSON.parse( JSON.stringify( array ) );
+	//vertical arriba izquierda
+	filcam = fil-1;
+	var colcam=col-1;
+	if(filcam>0 && colcam>0){
+		if(array1[filcam][colcam]=="nada" || (array1[filcam][colcam].charAt(4)==letra1 && array1[filcam][colcam]!="rey_"+letra1)){
+			array1[filcam][colcam]=array[fil][col];
+			array1[fil][col]="nada";
+			var tmp = jaqueComp(true,array1);
+			if(tmp==true){
+				comp++;
+			}
+		}else{
+			comp1--;
+		}
+	}else{
+		comp1--;
+	}
+	array1.length=0;
+	array1= JSON.parse( JSON.stringify( array ) );
+	//vertical arriba derecha
+	filcam = fil-1;
+	colcam=col+1;
+	if(filcam>0 && colcam<9){
+		if(array1[filcam][colcam]=="nada" || (array1[filcam][colcam].charAt(4)==letra1 && array1[filcam][colcam]!="rey_"+letra1)){
+			array1[filcam][colcam]=array[fil][col];
+			array1[fil][col]="nada";
+			var tmp = jaqueComp(true,array1);
+			if(tmp==true){
+				comp++;
+			}
+		}else{
+			comp1--;
+		}
+	}else{
+		comp1--;
+	}
+	array1.length=0;
+	array1= JSON.parse( JSON.stringify( array ) );
+	//horizontal izquierda
+	colcam=col-1;
+	if(colcam>0){
+		if(array1[fil][colcam]=="nada" || (array1[fil][colcam].charAt(4)==letra1 && array1[fil][colcam]!="rey_"+letra1)){
+			array1[fil][colcam]=array[fil][col];
+			array1[fil][col]="nada";
+			var tmp = jaqueComp(true,array1);
+			if(tmp==true){
+				comp++;
+			}
+		}else{
+			comp1--;
+		}
+	}else{
+		comp1--;
+	}
+	array1.length=0;
+	array1= JSON.parse( JSON.stringify( array ) );
+	//Horizontal derecha
+	colcam=col+1;
+	if(colcam<9){
+		if(array1[fil][colcam]=="nada" || (array1[fil][colcam].charAt(4)==letra1 && array1[fil][colcam]!="rey_"+letra1)){
+			array1[fil][colcam]=array[fil][col];
+			array1[fil][col]="nada";
+			var tmp = jaqueComp(true,array1);
+			if(tmp==true){
+				comp++;
+			}
+		}else{
+			comp1--;
+		}
+	}else{
+		comp1--;
+	}
+	array1.length=0;
+	array1= JSON.parse( JSON.stringify( array ) );
+	//Vertical abajo
+	filcam = fil+1;
+	if(filcam<9){
+		if(array1[filcam][col]=="nada" || (array1[filcam][col].charAt(4)==letra1 && array1[filcam][col]!="rey_"+letra1)){
+			array1[filcam][col]=array[fil][col];
+			array1[fil][col]="nada";
+			var tmp = jaqueComp(true,array1);
+			if(tmp==true){
+				comp++;
+			}
+		}else{
+			comp1--;
+		}
+	}else{
+		comp1--;
+	}
+	array1.length=0;
+	array1= JSON.parse( JSON.stringify( array ) );
+	//vertical abajo izquierda
+	filcam = fil+1;
+	colcam=col-1;
+	if(filcam<9 && colcam>0){
+		if(array1[filcam][colcam]=="nada" || (array1[filcam][colcam].charAt(4)==letra1 && array1[filcam][colcam]!="rey_"+letra1)){
+			array1[filcam][colcam]=array[fil][col];
+			array1[fil][col]="nada";
+			var tmp = jaqueComp(true,array1);
+			if(tmp==true){
+				comp++;
+			}
+		}else{
+			comp1--;
+		}
+	}else{
+		comp1--;
+	}
+	array1.length=0;
+	array1= JSON.parse( JSON.stringify( array ) );
+	//vertical abajo derecha
+	filcam = fil+1;
+	colcam=col+1;
+	if(filcam<9 && colcam<9){
+		if(array1[filcam][colcam]=="nada" || (array1[filcam][colcam].charAt(4)==letra1 && array1[filcam][colcam]!="rey_"+letra1)){
+			array1[filcam][colcam]=array[fil][col];
+			array1[fil][col]="nada";
+			var tmp = jaqueComp(true,array1);
+			if(tmp==true){
+				comp++;
+			}
+		}else{
+			comp1--;
+		}
+	}else{
+		comp1--;
+	}
+	array1.length=0;
+	array1= JSON.parse( JSON.stringify( array ) );
+	if(comp1==comp){
+		alert("Tablas");
+		localStorage.setItem("jugar","no");
+	}
+}
+
+function compTablas(){
+	var cont = parseInt(localStorage.getItem("contTablas"));
+	if(cont==50){
+		restaurarAzul();
+		alert("Tablas");
+		localStorage.setItem("jaqueMattt","si");
+		localStorage.setItem("jugar","no");
+	}
+
+}
 
 
 
