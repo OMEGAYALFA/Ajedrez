@@ -1803,7 +1803,7 @@ function enroque(color){
 		var tpp = parseInt(localStorage.getItem("rey_b"));
 		var tpp1 = 0;
 		var acu=0;
-		if(tpp==0 && tpp1==0){
+		if(tpp<=0 && tpp1==0){
 			if(array[8][1]=="torrb"){
 				for(var cont=2;cont<5;cont++){
 					if(array[8][cont]!="nada"){
