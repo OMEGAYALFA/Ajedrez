@@ -41,6 +41,17 @@ window.onload=function(){
 						document.getElementById("info").setAttribute("class","");
 					}, 2000);
 	},4000);
+	compNave();
+}
+
+function compNave(){
+	var comp = navigator.userAgent.toLowerCase().indexOf('chrome');
+	if(comp>-1){
+		document.getElementById("torren").setAttribute("class","inv");
+	}
+	if( navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/Windows Phone/i)){
+	    document.getElementById("arrrst").setAttribute("class","inv");
+	}
 }
 
 function reproSon(nombre){
@@ -199,6 +210,7 @@ function on(audio,id){
 	document.getElementById(tempId+1).setAttribute("class","on");
 	if(tempId=="bb-1"){
 		localStorage.setItem("musicaj","si");
+		reproSon("boton.mp3");
 	}
 	if(tempId=="bb0"){
 		localStorage.setItem("musica","si");
@@ -229,6 +241,7 @@ function off(audio,id){
 	document.getElementById(tempId+1).setAttribute("class","off");
 	if(tempId=="bb-1"){
 		localStorage.setItem("musicaj","no");
+		reproSon("boton.mp3");
 	}
 	if(tempId=="bb0"){
 		localStorage.setItem("musica","no");
@@ -252,7 +265,6 @@ function off(audio,id){
 
 function musicaRepro(audio){
 	audio.setAttribute("id","aud");
-	audio.autoplay = true;
 	audio.loop=true;
 	var comp = localStorage.getItem("musica");
 	if(comp=="si"){

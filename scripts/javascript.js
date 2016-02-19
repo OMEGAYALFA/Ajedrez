@@ -1,8 +1,16 @@
+
+//|------------------------------------------------|
+//|Ajedrez, Creado por Jorge Roselló, versión 1.0.4|
+//|------------------------------------------------|
+
+
+//Este array es el tablero de ajedrez
 var array=[[],[],[],[],[],[],[],[],[]];
 window.onload = function(){
 	iniciar();
 	eveDetec();	
 }
+//Se ejecuta nada mas cargar la página
 function iniciar(){
 	cModo();
 	turnos();
@@ -10,6 +18,8 @@ function iniciar(){
 	musicaJuego();
 }
 
+//Esta función resetea las variables como las posiciones, el turno, etc. Se ejecuta cuando se reinicia el
+//juego.
 function resetVar(){	
 	localStorage.setItem("rey_n","0");
 	localStorage.setItem("rey_b","0");
@@ -35,6 +45,8 @@ function resetVar(){
 	localStorage.setItem("contTablas","0");
 }
 
+//Esta función crea la música que se escucha durante el juego. Las tres funciones siguientes detectan el
+//fin de una canción y reproduce la siguiente. Hace esto por cada canción y hay tres canciones.
 function musicaJuego(){
 	var sonidos = localStorage.getItem("musicaj");
 	if(sonidos=="si"){
@@ -73,6 +85,7 @@ function cancion3(audio1,audio2,audio3){
     }, false);
 }
 
+//Comprueba el modo (Arrastrar o tocar), y ejecuta la funcion con la que se crea el tablero.
 function cModo(){	
 	var modo=localStorage.getItem("modo");
 	document.getElementById("mm").innerHTML="Modo "+modo;
@@ -86,6 +99,7 @@ function modoInt(){
 	cModo();
 }
 
+//Reproduce los sonidos, que le pasan. 
 function reproSon(nombre){
 	var sonidos = localStorage.getItem("sonidos");
 	if(sonidos=="si"){
@@ -93,6 +107,8 @@ function reproSon(nombre){
 		audio1.play();
 	}
 }
+
+//Añade Event Listeners a los tres botones: reinicar, retorceder, volver al menu.
 function eveDetec(){
 	document.getElementById("bru").addEventListener("click",function(){																
 																var tmp = localStorage.getItem("jugar");
@@ -125,19 +141,15 @@ function eveDetec(){
 																reproSon("click2.wav");																guardar();
 																location.href="../index.html";
 	});
-	document.getElementById("parrt").addEventListener("click",function(){
-														cheat();		
-	});
 }
 
-function cheat(){
-	for(var cont=1;cont!=9;cont++){
-			for(var cont1=1;cont1!=9;cont1++){
-				document.getElementById("c"+cont+""+cont1).setAttribute("class","cmover");
-			}
-		}
-}
-
+//Esta es la funcion que retrocede una jugada en el tablero. Recoge el string donde estan guardados todas
+//las jugadas, tambien recoge el string donde estan las fichas comidas y por ultimo recoge tambien otro
+//string donde tambien se guardan jugadas donde ocurren dos cosas, por ejemplo un enroque o un cambio de
+//peon por otra ficha cuando llega al otro extremo del tablero. Una vez que detecta la jugada elimina la
+//jugada que acaba de retroceder para que no se pueda repetir otra vez. Tambien detecta si se ha retorcedido
+//un movimiento de un rey o una torre y le resta 1 a su respectivo contador para que asi el enroque funcione 
+//bien. Tambien elimina la ficha que se ha retorcedido de las columnas de las fichas comidas.
 function ultMov(){
 	restaurarAzul();
 
@@ -446,7 +458,8 @@ function ultMov(){
     }
 }
 
-
+//Cuando se ejecuta esta función cambia el turno. Así si por ejemplo es el turno de las fichas blancas
+//y se ejecuta esta función cambiaria el turno a las fichas negras.
 function turnos(){
 	var n;
 	var tmp=localStorage.getItem("turno");
@@ -462,6 +475,8 @@ function turnos(){
 	document.getElementById("turno").innerHTML="Jugador "+n+" ("+localStorage.getItem("turno")+")";	
 }
 
+//Esta funcion crea el tablero con las casillas blancas y negras, el tablero tiene un tamaño de 8x8. Y
+//el orden de las fichas negras y blancas depende de si la fila es par o impar
 function crear(){
 	document.getElementById("tab").innerHTML="";
 	var clase1="cnegro";
@@ -506,6 +521,9 @@ function crear(){
 	}
 }
 
+//Añade los Event Listeners a las fichas y a las casillas cuando esta activado el modo tocar, tambien
+//puede recibir un parametro para no aplicar los Event Listener cuando se carga una partida porque no 
+//estarian presentes todas las fichas. 
 function tocar(restaurar){
 	if(restaurar!=true){
 		for(var fil=1;fil<9;fil++){
@@ -526,6 +544,9 @@ function tocar(restaurar){
 	}	
 }
 
+//Añade los Event Listeners a las fichas y a las casillas cuando esta activado el modo arrastrar, tambien
+//puede recibir un parametro para no aplicar los Event Listener cuando se carga una partida porque no 
+//estarian presentes todas las fichas. 
 function arrast(restaurar){
 	if(restaurar!=true){
 		for(var fil=1;fil<9;fil++){
@@ -545,6 +566,8 @@ function arrast(restaurar){
 	}
 }
 
+//Esta función se ejecuta cuando tocas una ficha por primera vez para que se vean las casillas verdes con
+//los posibles movimientos si detecta un segundo toca en otra ficha distinta elimina las casillas verdes.
 function colotoc(e){
 		
 	var tocar = localStorage.getItem("tocar1");
@@ -570,6 +593,8 @@ function colotoc(e){
 	}
 }
 
+//Se ejecuta la segunda vez que pulsas una casilla o una ficha y detecta si hay una casilla verde 
+//(un movimiento) o morado (enroque) y si estan presentes mueve la ficha.
 function colotoc2(e){
 	var ant=localStorage.getItem("idss");
 	var tmp= e.target.id;
@@ -585,7 +610,7 @@ function colotoc2(e){
 	}
 }
 
-
+//Esta función rellena todo el tablero con fichas nada mas iniciarse la partida
 function rell(){
 	for(var fil=1;fil!=9;fil++){
 		for(var col=1;col!=9;col++){
@@ -603,6 +628,13 @@ function rell(){
 	}
 }
 
+//A esta funcion le pasas una fila y una columna y te crea una ficha, y la uso de dos formas gracias
+//al tercer parametro si la variable "rell" es true significa que esta en modo rellenar, es decir, 
+//que se ejcuta cuando se inicia por primera vez o se reinicia la partida. Entonces en modo rellenar
+//crea la ficha, mete la informacion en el array y tambien mete la ficha en su posicion inicial del tablero.
+//Si el modo rellenar esta desactivado entonces lo unico que hace es crea la ficha y la devuelve para que
+//otras funciones la puedan usar. Cuando la funcion crea la ficha tambien comprueba el ajuste de 3D activado
+//Para aplicarle la clase "lnegro" (Modo 3D activado) o la clase "lnegro1" (Modo 3D desactivado).
 function creaFich(fil,col,rell){
 	var dd = document.createElement("div");
 		if(rell==true){
@@ -716,6 +748,17 @@ function creaFich(fil,col,rell){
 	return dd;
 }
 
+//Esta función tiene programado todas los movimientos de todas las fichas posibles. En cuanto a los
+//movimientos si por ejemplo va a comprobar los movimientos de una torre negra va contando todas las
+//casillas que se puede mover verticalmente y horizontalmente y se parara cuando llegue a una ficha 
+//negra y no contara la casilla donde esta esa ficha negra, una ficha blanca y contara esa casilla ya 
+//que la va a poder comer, y también se parara si se encuentra con los bordes del tablero. Por último 
+//cabe destacar que la funcion mover tiene dos modos, cuando el modo jaque mate esta desacactivado una
+//vez comprobados los movimientos le aplica a las casillas del tablero donde se puede mover la clase
+//"cmover" que pone la casilla verde indicando que se puede mover a esa casilla. Y cuando el modo jaque
+//mate esta activado en vez de cambiar la clase de las casillas a donde se puede mover lo que hace es
+//guardar en una array todas las posiciones posibles de esa ficha y devuelve ese array. Le pasas cuatro
+//parametros a la funcion: la fila, la columna, que ficha es y si el modo Jaque Mate esta activo o no.
 function mover(fil,col,ficha,jaqueMate){
 	var letra = ficha.charAt(4);
 	var letra1;
@@ -1672,6 +1715,9 @@ function mover(fil,col,ficha,jaqueMate){
 	}
 }
 
+
+//Esta función lo que hace es evitar que un rey pueda hacer jaque a otro. Si detecta que un rey
+//esta haciendo jaque a otro ejecuta la función ultMov, retrocediendo asi una jugada.
 function compReyes(){
 
 	for(var fil=1;fil<9;fil++){
@@ -1798,6 +1844,9 @@ function compReyes(){
 
 }
 
+//Actua igual que la funcion mover solo que esta vez comprueba si es posible el enroque. Si detecta que
+//el rey no se ha movido y que las torres no se han movido entonces pone la casilla donde el rey puede
+//enrocarse de color morado. La clase de la casilla de enroque se llama "cmover1".
 function enroque(color){
 	if(color=="b"){
 		var tpp = parseInt(localStorage.getItem("rey_b"));
@@ -1857,6 +1906,10 @@ function enroque(color){
 	}
 }
 
+//Esta funcion cuando se ejecuta lo que hace es elimina la clase "cmover" y "cmover1" (las clases que
+//se le aplican a las casillas que indican que puede mover la ficha a esa posición (cmover) o que 
+//indica la posibilidad de enroque (comver1)) y las sustituye por su respectiva clase de color blanco
+//negro dependiendo si estan en un fila par o impar.
 function restaurar(){
 	for(var fil=1;fil!=9;fil++){
 		for(var col=1;col!=9;col++){
@@ -1880,6 +1933,8 @@ function restaurar(){
 	}
 }
 
+//Esta función es muy parecida a la funcion restaurar() solo que la clase que elimina de la casilla es
+//la clase (cmover2) que indica el último movimiento realizado.
 function restaurarAzul(){
 	for(var fil=1;fil!=9;fil++){
 		for(var col=1;col!=9;col++){
@@ -1903,11 +1958,12 @@ function restaurarAzul(){
 	}
 }
 
-
+//Permite que se pueda soltar la ficha que se esta arrastrando durante el modo arrastrar.
 function permitirSoltar(ev) {
     ev.preventDefault();
 }
 
+//Esta función es la que se ejecuta cuando arrastras una ficha.
 function arrastrar(ev) {
 	restaurarAzul();
 	var tmp=ev.target.id;
@@ -1923,6 +1979,7 @@ function arrastrar(ev) {
 	}
 }
 
+//Esta es la función que se ejecuta cuando sueltas una fiha cuando el modo arrastrar esta activado.
 function soltar(ev) {
     ev.preventDefault();
     var ids = ev.dataTransfer.getData("text");
@@ -1934,7 +1991,16 @@ function soltar(ev) {
 }
 
 
-
+//Esta funcin cuando se ejecuta lo que hace es mover una ficha a una casilla. Le pasas dos parametros
+//la fila y la columna donde esta la ficha y la fila y la columna a donde quieres mover la ficha. La 
+//función guarda también en un string la posición de salida de la ficha y la posición de destino de la
+//ficha, tambien guarda si se ha comido una ficha y si se ha realizado un enroque en esa jugada, esto lo
+//hace para que cuando se ejecute la funcion ultMov() funcione sin problemas. Tambien detecta si se ha
+//movido una torre o un rey y suma a su respectivo contador para que la funcion que comprueba el enroque
+//funcione bien. Tambien aplica la clase "cmover2" a la casilla de salida y a la casilla
+//de destino para asi poder indicar la última jugada. Además si detecta que se ha comido una ficha
+//la mete en su respectiva columnas de fichas comidas. Si no se ha comido nada se le suma uno al contador
+//de tablas, y si se come alguna ficha se pone a cero el contador de tablas.
 function colocador(ids,tmp){
 	var fils=parseInt(ids.charAt(1));
 	var cols=parseInt(ids.charAt(2));
@@ -2123,6 +2189,9 @@ function colocador(ids,tmp){
 	}  
 }
 
+//Comprueba las fichas comidas para asi ponerlas en las columnas de comidas. Hay dos columnas blancas
+//y negras. Para poner las fichas comidas en las columnas de comidas lo que hace es ejecutar la funcion
+//creaFich() con el tercer parametro en false.
 function filasCol(){
 	var ultFichtemp = localStorage.getItem("ultmfich");
 	var ultFich="";
@@ -2215,6 +2284,10 @@ function filasCol(){
 	compTablas();
 }
 
+//Comprueba si los peones han llegado al extremo contrario del tablero para asi dar al jugador la opcion
+//de elegir la ficha por la que la quieres cambiar. La eleccion se realiza haciendo visible un fila con
+//cuatro casillas de ajedrez y con cuatro fichas: caballo, alfil, torre y reina. Y les aplica un Event
+//Listener que ejecuta convNegro() si el peon es negro y convBlanco() si la ficha es blanca.
 function peonComp(){
 	for(var col=1;col<9;col++){
 		if(array[1][col]=="peonb"){
@@ -2236,6 +2309,9 @@ function peonComp(){
 	}
 }
 
+//Esta funcion intercambia el peon negro que ha llegado a la fila 1 por la ficha elegida por el
+//jugador. Una vez intercambiada guarda en el String de dobles jugadas la posicion del peon en el
+//tablero para poder ejecutar la función ultMov() y que funcione. 
 function convNegro(ev){
 	turnos();
 	document.getElementById("ppn").setAttribute("class","inv");
@@ -2287,6 +2363,9 @@ function convNegro(ev){
 	turnos();
 }
 
+//Esta funcion intercambia el peon blanco que ha llegado a la fila 8 por la ficha elegida por el
+//jugador. Una vez intercambiada guarda en el String de dobles jugadas la posicion del peon en el
+//tablero para poder ejecutar la función ultMov() y que funcione. 
 function convBlanco(ev){
 	turnos();
 	document.getElementById("ppbl").setAttribute("class","inv");
@@ -2336,6 +2415,17 @@ function convBlanco(ev){
 	turnos();
 }
 
+//Comprueba si alguna ficha esta haciendo jaque al rey. Lo que hace es comprobar primero el turno y si 
+//por ejemplo el turno es de las fichas blancas y acaba demover lo que hace es comprobar todos los
+//movimientos posibles de las fichas blancas y si el rey está en alguno de los posibles movimientos le
+//aplica al  body una clase con el fondo rojo y activa una varable booleana indicando que esta en jaque.
+//Y tiene dos modos el normal que es cuando se ejecuta después de cada movimiento y el modoMate que es
+//cuando se ejecuta desde la función que comprueba si es Jaque Mate. En el modo jaque mate lo que hace
+//es devolver un array con todos los movimientos posibles de todas las fichas, tambien recibe un array
+//que es una copia del tablero con una ficha cambiada. Ademas esta función comprueba si no se impide el
+//mate es decir si las blancas estan en mate y se mueve una ficha que no impide el mate se ejecuta la
+//función ultMov() retrocediendo asi una jugada. Por último tambien impide que si por ejemplo es el 
+//turno de las fichas blancas y estas, hacen un movimiento que les pone en mate.
 function jaqueComp(modoMate,arrayMate,retroceso){
 
 	if(modoMate==null){
@@ -3204,6 +3294,11 @@ function jaqueComp(modoMate,arrayMate,retroceso){
 	}
 }
 
+//Lo que hace es comprobar los Jaques Mates, y funciona de la siguiente forma: lo que hace primero es
+//comprobar si el rey se mueve se evita el jaque. Y luego lo que hace es simulaciones de movimientos
+//comprobando si alguna ficha corta el jaque, esta se hace usando el modoMate de jaqueComp(). Si detecta
+//el jaque mate hace aparecer un mensaje en pantalla y evita que se pueda retroceder ni mover ninguna
+//ficha más.
 function jaqueMateComp(fichas,posiciones,fichasPosi,posicionesPosi,letraRey,posicionesFichasInter){
 	var array1= JSON.parse( JSON.stringify( array ) );
 	var rey= "rey_"+letraRey;
@@ -3443,7 +3538,8 @@ function jaqueMateComp(fichas,posiciones,fichasPosi,posicionesPosi,letraRey,posi
 	}
 }
 
-
+//Esta función se ejecuta cada vez que se realiza un movimiento, y guarda en un String de forma local
+//todas las posiciones del tablero de las fichas.
 function guardar(){
 	localStorage.setItem("guardar","");
 	var save = localStorage.getItem("guardar");
@@ -3459,6 +3555,9 @@ function guardar(){
 	localStorage.setItem("guardar",save);
 }
 
+//Esta función se ejecuta cuando se recarga o se carga la pagina y lo primero que hace es comprobar
+//primero si existen datos de la última partida, y si se detectan se pregunta al usuario si quiere cargar
+//la partida. Si pulsa que si se carga sin problemas, y si pulsa que no se eliminan los datos guardados.
 function cargarSave(){
 	var save = localStorage.getItem("guardar");
 	var acu=0;
@@ -3657,7 +3756,8 @@ function cargarSave(){
 	turnos();
 }
 
-
+//Comprueba si el rey esta ahogado, solo se ejecuta si no se esta en mate. Si se detecta el ahogado se
+//alerta de que es tablas e impide movimientos y tambien impide que se pueda retroceder.
 function compAhogado(){
 	var turn = localStorage.getItem("turno");
 	var letra=turn.charAt(0);
@@ -3845,6 +3945,8 @@ function compAhogado(){
 	}
 }
 
+//Comprueba si son tablas cargando el contador de movimientos sin comer. Si el contador es igual a 50 
+//se alerta de que es tablas e impide movimientos y tambien impide que se pueda retroceder.
 function compTablas(){
 	var cont = parseInt(localStorage.getItem("contTablas"));
 	if(cont==50){
